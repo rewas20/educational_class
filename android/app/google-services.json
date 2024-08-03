@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "897536117464",
+    "firebase_url": "https://educational-class-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "educational-class",
+    "storage_bucket": "educational-class.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:897536117464:android:ae4674a671c08150c425ad",
+        "android_client_info": {
+          "package_name": "com.epsilon.easyapps.educational_class"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCr5oJj41VoyFMr09YC5v5xaHeE3xUFMMs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
