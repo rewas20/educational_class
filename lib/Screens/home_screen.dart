@@ -7,7 +7,7 @@ import 'package:educational_class/Models/person.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:open_file_plus/open_file_plus.dart';
+import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as xls;
 import 'package:universal_html/html.dart' show AnchorElement;
@@ -47,11 +47,16 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           PopupMenuButton<MenuItemModel>(
             onSelected: (item) => onSelected(context,item),
-              itemBuilder: (context) => [
-                ...MenuItems.itemsFirst.map(buildItem).toList(),
-                /*PopupMenuDivider(),
-                ...MenuItems.itemsSecond.map(buildItem).toList(),*/
-              ],
+            padding: EdgeInsets.zero,
+            constraints: BoxConstraints(
+              minWidth: 200,
+              maxWidth: 300,
+            ),
+            itemBuilder: (context) => [
+              ...MenuItems.itemsFirst.map(buildItem).toList(),
+              /*PopupMenuDivider(),
+              ...MenuItems.itemsSecond.map(buildItem).toList(),*/
+            ],
           )
         ],
         title: const Text("الفصل التعليمي",style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold,color: Colors.white),),

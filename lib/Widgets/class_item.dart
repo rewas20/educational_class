@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:educational_class/Models/person.dart';
 import 'package:educational_class/Screens/attendance_screen.dart';
 import 'package:educational_class/Screens/names_screen.dart';
-import 'package:open_file_plus/open_file_plus.dart';
+import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:universal_html/html.dart' show AnchorElement;
 import 'package:flutter/foundation.dart' show kIsWeb;
