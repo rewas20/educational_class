@@ -1,7 +1,7 @@
+import 'package:educational_class/Data/data.dart';
+import 'package:educational_class/Widgets/category_item.dart';
 import 'package:flutter/material.dart';
 
-import '../../Data/data.dart';
-import '../../Widgets/category_item.dart';
 
 class CategoriesDivideScreen extends StatelessWidget {
   const CategoriesDivideScreen({Key? key}) : super(key: key);

@@ -1,8 +1,8 @@
+import 'package:educational_class/Models/person.dart';
+import 'package:educational_class/Provider/db_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-import '../Models/person.dart';
-import '../Provider/db_provider.dart';
 
 class ViewDataNameScreen extends StatefulWidget {
   static const routeName = "VIEW_DATA_NAME_SCREEN";

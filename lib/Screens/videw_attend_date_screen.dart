@@ -1,8 +1,8 @@
+import 'package:educational_class/Provider/db_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 
-import '../Provider/db_provider.dart';
 
 class ViewAttendDateScreen extends StatefulWidget {
   static const routeName = "VIEW_ATTEND_DATE_SCREEN";

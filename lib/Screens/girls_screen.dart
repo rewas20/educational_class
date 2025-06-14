@@ -1,11 +1,11 @@
 
+import 'package:educational_class/Models/person.dart';
+import 'package:educational_class/Models/search_bar.dart';
+import 'package:educational_class/Provider/db_provider.dart';
 import 'package:educational_class/Screens/person_search_screen.dart';
+import 'package:educational_class/Widgets/name_item.dart';
 import 'package:flutter/material.dart';
 
-import '../Models/person.dart';
-import '../Models/search_bar.dart';
-import '../Provider/db_provider.dart';
-import '../Widgets/name_item.dart';
 import 'add_name_screen.dart';
 
 class GirlsScreen extends StatefulWidget {

@@ -1,18 +1,18 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:educational_class/Models/class.dart';
+import 'package:educational_class/Models/attendance.dart';
+import 'package:educational_class/Models/question.dart';
+import 'package:educational_class/Provider/db_provider.dart';
 import 'package:educational_class/Screens/videw_attend_date_screen.dart';
+import 'package:educational_class/Widgets/date_attendance_item.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:open_file/open_file.dart';
+import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:syncfusion_flutter_xlsio/xlsio.dart';
+import 'package:syncfusion_flutter_xlsio/xlsio.dart' as xls;
 import 'package:universal_html/html.dart' show AnchorElement;
 import 'package:flutter/foundation.dart' show kIsWeb;
-import '../Models/attendance.dart';
-import '../Models/question.dart';
-import '../Provider/db_provider.dart';
-import '../Widgets/date_attendance_item.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AttendanceScreen extends StatefulWidget {
   static const routeName = "ATTENDANCE_SCREEN";
@@ -141,10 +141,10 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
         await DatabaseProvider.instance.readAllAttendTimeByClass(date,classNumber);
     List<QuestionModel> questions =
         await DatabaseProvider.instance.readAllQuestion();
-    final Workbook workbook = Workbook();
-    final Worksheet sheet = workbook.worksheets[0];
-    final Worksheet sheet2 = workbook.worksheets.addWithName("الصلاة");
-    final Worksheet sheet3 = workbook.worksheets.addWithName("فكر مسيحي");
+    final xls.Workbook workbook = xls.Workbook();
+    final xls.Worksheet sheet = workbook.worksheets[0];
+    final xls.Worksheet sheet2 = workbook.worksheets.addWithName("الصلاة");
+    final xls.Worksheet sheet3 = workbook.worksheets.addWithName("فكر مسيحي");
 
     sheet.name = "الحضور";
     sheet.getRangeByName('${letters[0]}1').setText("الوقت");
@@ -300,11 +300,24 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
       final String fileName = "$path/educational_class($time)($classNumber).xlsx";
       try {
         await File(fileName).writeAsBytes(bytes, flush: true);
+        final file = File(fileName);
+        if (await file.exists()) {
+          final result = await OpenFilex.open(file.path);
+          if (result.type != ResultType.done) {
+            Fluttertoast.showToast(msg: "Could not open file: ${result.message}");
+          }
+          // final uri = Uri.file(file.path);
+          // if (await canLaunchUrl(uri)) {
+          //   await launchUrl(uri);
+          // } else {
+          //   Fluttertoast.showToast(msg: "Could not open file");
+          // }
+        }
       } on FileSystemException catch (e) {
-        Fluttertoast.showToast(msg: "wrong");
+        Fluttertoast.showToast(msg: "Error saving file");
       }
-      OpenFile.open(fileName);
       Navigator.pop(context);
+
     }
   }
 

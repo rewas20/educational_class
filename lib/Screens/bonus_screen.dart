@@ -1,11 +1,9 @@
 
+import 'package:educational_class/Models/attendance.dart';
+import 'package:educational_class/Models/question.dart';
+import 'package:educational_class/Provider/db_provider.dart';
 import 'package:educational_class/Screens/questions_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-
-import '../Models/attendance.dart';
-import '../Models/question.dart';
-import '../Provider/db_provider.dart';
 
 class BonusScreen extends StatefulWidget {
   static const routeName = "BONUS_SCREEN";

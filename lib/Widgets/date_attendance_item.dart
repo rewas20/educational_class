@@ -1,11 +1,11 @@
+import 'package:educational_class/Models/attendance.dart';
+import 'package:educational_class/Provider/db_provider.dart';
 import 'package:educational_class/Screens/view_attendance_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 
-import '../Models/attendance.dart';
-import '../Provider/db_provider.dart';
 
 class DateAttendanceItem extends StatelessWidget {
   final String date;

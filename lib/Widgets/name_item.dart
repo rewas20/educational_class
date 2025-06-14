@@ -1,9 +1,7 @@
+import 'package:educational_class/Provider/db_provider.dart';
+import 'package:educational_class/Screens/bonus_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:intl/intl.dart';
-
-import '../Provider/db_provider.dart';
-import '../Screens/bonus_screen.dart';
 
 class NameItem extends StatelessWidget {
   final int? id;

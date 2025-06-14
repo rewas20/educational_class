@@ -1,10 +1,10 @@
+import 'package:educational_class/Models/attendance.dart';
+import 'package:educational_class/Models/search_bar.dart';
+import 'package:educational_class/Provider/db_provider.dart';
+import 'package:educational_class/Widgets/name_item.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../Models/attendance.dart';
-import '../Models/search_bar.dart';
-import '../Provider/db_provider.dart';
-import '../Widgets/name_item.dart';
 import 'attendance_search_screen.dart';
 
 class ViewAttendanceScreen extends StatefulWidget {

@@ -1,13 +1,12 @@
 
+import 'package:educational_class/Models/attendance.dart';
+import 'package:educational_class/Models/person.dart';
+import 'package:educational_class/Provider/db_provider.dart';
 import 'package:educational_class/Screens/questions_screen.dart';
 import 'package:educational_class/Screens/scanner_camera_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
-
-import '../Models/attendance.dart';
-import '../Models/person.dart';
-import '../Provider/db_provider.dart';
 
 class ScanScreen extends StatefulWidget {
   static const routeName = "SCAN_SCREEN";

@@ -1,9 +1,9 @@
 
+import 'package:educational_class/Models/attendance.dart';
+import 'package:educational_class/Provider/db_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-import '../Models/attendance.dart';
-import '../Provider/db_provider.dart';
 import 'bonus_screen.dart';
 
 class SearchScreen extends StatefulWidget {
