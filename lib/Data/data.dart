@@ -1,5 +1,3 @@
-
-
 import 'package:educational_class/Models/class.dart';
 import 'package:educational_class/Screens/attendance_screen.dart';
 import 'package:educational_class/Screens/boys_screen.dart';
@@ -34,13 +32,6 @@ var CATEGORY_NAMES = [
   CategoryModel(name: "الولاد", routeName: BoysScreen.routeName,type: 'boys'),
   CategoryModel(name: "البنات", routeName: GirlsScreen.routeName,type: 'girls'),
 ];
-
-
-
-
-
-
-
 
 var DATA_PERSONS = [
   // EC.1 additional entries
