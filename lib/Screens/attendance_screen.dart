@@ -306,12 +306,6 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
           if (result.type != ResultType.done) {
             Fluttertoast.showToast(msg: "Could not open file: ${result.message}");
           }
-          // final uri = Uri.file(file.path);
-          // if (await canLaunchUrl(uri)) {
-          //   await launchUrl(uri);
-          // } else {
-          //   Fluttertoast.showToast(msg: "Could not open file");
-          // }
         }
       } on FileSystemException catch (e) {
         Fluttertoast.showToast(msg: "Error saving file");

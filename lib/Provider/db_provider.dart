@@ -299,7 +299,8 @@ class DatabaseProvider{
       Fluttertoast.showToast(msg: "name $name not found");
       throw Exception('ID $name not found');
     }
-  } Future<List<AttendanceModel>> readAllAttendsByCodeAndClassNumber(String name,String code,String classNumber)async{
+  }
+  Future<List<AttendanceModel>> readAllAttendsByCodeAndClassNumber(String name,String code,String classNumber)async{
     final db = await instance.database;
     final maps = await db.query(
       tableAttendance,
@@ -310,8 +311,8 @@ class DatabaseProvider{
     if(maps.isNotEmpty){
       return maps.map((json) => AttendanceModel.fromJson(json)).toList();
     }else{
-      Fluttertoast.showToast(msg: "code $code not found");
-      throw Exception('ID $code not found');
+      //Fluttertoast.showToast(msg: "code $code not found");
+      return [];
     }
   }
   //===========

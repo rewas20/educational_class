@@ -4,12 +4,15 @@ import 'package:educational_class/Data/menu_items.dart';
 import 'package:educational_class/Models/attendance.dart';
 import 'package:educational_class/Models/menu_item.dart';
 import 'package:educational_class/Models/person.dart';
+import 'package:educational_class/Models/question.dart';
 import 'package:educational_class/Provider/db_provider.dart';
 import 'package:educational_class/Screens/login_screen.dart';
 import 'package:educational_class/Services/auth_service.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
+import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as xls;
 import 'package:universal_html/html.dart' show AnchorElement;
@@ -57,6 +60,9 @@ class _HomeScreenState extends State<HomeScreen> {
               itemBuilder: (context) => [
                 ...MenuItems.itemsFirst.map(buildItem).toList(),
                 PopupMenuDivider(),
+                ...MenuItems.itemsSecond.map(buildItem).toList(),
+                PopupMenuDivider(),
+
                 PopupMenuItem<MenuItemModel>(
                   value: MenuItemModel(
                     text: "تسجيل الخروج",
@@ -118,6 +124,9 @@ class _HomeScreenState extends State<HomeScreen> {
         break;
       case MenuItems.itemUploadData:
         showDialog(context: context, builder: (context)=>alertDialog(context,item));
+        break;
+      case MenuItems.itemTotalGrade:
+        excelSheetTotalGrade(context);
         break;
       default:
         if (item.text == "تسجيل الخروج") {
@@ -561,68 +570,183 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Future sheetExcel() async{
+  Future<void> excelSheetTotalGrade(BuildContext context) async{
     List<String> letters = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
-    int totalGrade=0,total=0;
-    List<PersonModel> persons = await DatabaseProvider.instance.readAllPersons();
-    final xls.Workbook workbook =  xls.Workbook();
+    final xls.Workbook workbook = xls.Workbook();
     final xls.Worksheet sheet = workbook.worksheets[0];
-    sheet.name = "افراد";
-
+    final xls.Worksheet sheet2 = workbook.worksheets.addWithName("الصف الثاني");
+    final xls.Worksheet sheet3 = workbook.worksheets.addWithName("الصف الثالث");
+    final xls.Worksheet sheet4 = workbook.worksheets.addWithName("الصف الرابع");
+    sheet.name = "الصف الاول";
     sheet.getRangeByName('${letters[0]}1').setText("الاسم");
-    sheet.getRangeByName('${letters[1]}1').setText("الرتبه");
-    sheet.getRangeByName('${letters[2]}1').setText("رقم الرهط");
-    sheet.getRangeByName('${letters[3]}1').setText("اسم الرهط");
-    sheet.getRangeByName('${letters[4]}1').setText("درجة الحضور والاداوات");
-    sheet.getRangeByName('${letters[5]}1').setText("البونص");
-    sheet.getRangeByName('${letters[6]}1').setText("تقيم الفرد");
-    sheet.getRangeByName('${letters[7]}1').setText("تقيم الكشكول");
-    sheet.getRangeByName('${letters[8]}1').setText("المجموع");
-
-    final allAttendance = await DatabaseProvider.instance.readAllAttend();
+    sheet.getRangeByName('${letters[1]}1').setText("كود");
+    sheet.getRangeByName('${letters[2]}1').setText("فصل");
+    sheet.getRangeByName('${letters[3]}1').setText("رقم");
+    sheet.getRangeByName('${letters[4]}1').setText("المجموع");
+    sheet.getRangeByName('${letters[5]}1').setText("التوارخ");
     int numberRowSheet = 2;
-    persons.forEach((element) async {
-      sheet.getRangeByName('${letters[0]}${numberRowSheet}').setText(element.name);
-      sheet.getRangeByName('${letters[1]}${numberRowSheet}').setText(element.typeUser);
-      sheet.getRangeByName('${letters[2]}${numberRowSheet}').setText(element.classNumber != null && element.classNumber != "" && element.classNumber != "null" ? element.classNumber : "");
-      sheet.getRangeByName('${letters[3]}${numberRowSheet}').setText(element.code != null && element.code != "" && element.code != "null" ? element.code : "");
-      totalGrade=0;total=0;
+    List<PersonModel> personsEC1 =
+    await DatabaseProvider.instance.readAllPersonByClassNumber("EC.1");
+    personsEC1.forEach((person) async{
+      int count = 0;
+      List<String> dates = [];
 
+      List<AttendanceModel> attends =
+        await DatabaseProvider.instance.readAllAttendsByCodeAndClassNumber(person.name, person.code, person.classNumber);
+      if(attends.length>0){
+        sheet.getRangeByName('${letters[0]}${numberRowSheet}').setText(person.name);
+        sheet.getRangeByName('${letters[1]}${numberRowSheet}').setText("${person.classNumber}_${person.code}");
+        sheet.getRangeByName('${letters[2]}${numberRowSheet}').setText(person.classNumber);
+        sheet.getRangeByName('${letters[3]}${numberRowSheet}').setText(person.code);
+        count = attends.fold(0, (sum, att) => sum + (int.parse(att.total.toString())));
+        sheet.getRangeByName('${letters[4]}${numberRowSheet}').setText(count.toString());
+        dates = attends
+            .map((att) => att.date)
+            .where((date) => date.isNotEmpty) // optional: skip empty strings
+            .toList();
 
-        allAttendance.forEach((attend) {
-          if(element.name==attend.name){
-            totalGrade += (attend.grade!.isNotEmpty && attend.grade!=null)? int.parse(attend.grade.toString()??'') : 0;
-            total += attend.total!.isNotEmpty && attend.total!=null? int.parse(attend.total.toString()??''):0;
-          }
-        });
-        sheet.getRangeByName('${letters[4]}${numberRowSheet}').setText(totalGrade.toString());
-        sheet.getRangeByName('${letters[5]}${numberRowSheet}').setText(total.toString());
+        String datesString = dates.join(', ');
+
+        sheet.getRangeByName('${letters[5]}${numberRowSheet}').setText(datesString);
         numberRowSheet++;
+      }
+    });
+
+    sheet2.getRangeByName('${letters[0]}1').setText("الاسم");
+    sheet2.getRangeByName('${letters[1]}1').setText("كود");
+    sheet2.getRangeByName('${letters[2]}1').setText("فصل");
+    sheet2.getRangeByName('${letters[3]}1').setText("رقم");
+    sheet2.getRangeByName('${letters[4]}1').setText("المجموع");
+    sheet2.getRangeByName('${letters[5]}1').setText("التوارخ");
+
+    int numberRowSheet2 = 2;
+    List<PersonModel> personsEC2 =
+    await DatabaseProvider.instance.readAllPersonByClassNumber("EC.2");
+    personsEC2.forEach((person) async{
+      int count = 0;
+      List<String> dates = [];
+
+      List<AttendanceModel> attends =
+      await DatabaseProvider.instance.readAllAttendsByCodeAndClassNumber(person.name, person.code, person.classNumber);
+      if(attends.length>0){
+        sheet2.getRangeByName('${letters[0]}${numberRowSheet2}').setText(person.name);
+        sheet2.getRangeByName('${letters[1]}${numberRowSheet2}').setText("${person.classNumber}_${person.code}");
+        sheet2.getRangeByName('${letters[2]}${numberRowSheet2}').setText(person.classNumber);
+        sheet2.getRangeByName('${letters[3]}${numberRowSheet2}').setText(person.code);
+        count = attends.fold(0, (sum, att) => sum + (int.parse(att.total.toString())));
+        sheet2.getRangeByName('${letters[4]}${numberRowSheet2}').setText(count.toString());
+        dates = attends
+            .map((att) => att.date)
+            .where((date) => date.isNotEmpty) // optional: skip empty strings
+            .toList();
+
+        String datesString = dates.join(', ');
+
+        sheet2.getRangeByName('${letters[5]}${numberRowSheet2}').setText(datesString);
+        numberRowSheet2++;
+      }
+    });
+
+    sheet3.getRangeByName('${letters[0]}1').setText("الاسم");
+    sheet3.getRangeByName('${letters[1]}1').setText("كود");
+    sheet3.getRangeByName('${letters[2]}1').setText("فصل");
+    sheet3.getRangeByName('${letters[3]}1').setText("رقم");
+    sheet3.getRangeByName('${letters[4]}1').setText("المجموع");
+    sheet3.getRangeByName('${letters[5]}1').setText("التوارخ");
+
+    int numberRowSheet3 = 2;
+    List<PersonModel> personsEC3 =
+    await DatabaseProvider.instance.readAllPersonByClassNumber("EC.3");
+    personsEC3.forEach((person) async{
+      int count = 0;
+      List<String> dates = [];
+
+      List<AttendanceModel> attends =
+      await DatabaseProvider.instance.readAllAttendsByCodeAndClassNumber(person.name, person.code, person.classNumber);
+      if(attends.length>0){
+        sheet3.getRangeByName('${letters[0]}${numberRowSheet3}').setText(person.name);
+        sheet3.getRangeByName('${letters[1]}${numberRowSheet3}').setText("${person.classNumber}_${person.code}");
+        sheet3.getRangeByName('${letters[2]}${numberRowSheet3}').setText(person.classNumber);
+        sheet3.getRangeByName('${letters[3]}${numberRowSheet3}').setText(person.code);
+        count = attends.fold(0, (sum, att) => sum + (int.parse(att.total.toString())));
+        sheet3.getRangeByName('${letters[4]}${numberRowSheet3}').setText(count.toString());
+        dates = attends
+            .map((att) => att.date)
+            .where((date) => date.isNotEmpty) // optional: skip empty strings
+            .toList();
+
+        String datesString = dates.join(', ');
+
+        sheet3.getRangeByName('${letters[5]}${numberRowSheet3}').setText(datesString);
+        numberRowSheet3++;
+      }
+    });
+
+    sheet4.getRangeByName('${letters[0]}1').setText("الاسم");
+    sheet4.getRangeByName('${letters[1]}1').setText("كود");
+    sheet4.getRangeByName('${letters[2]}1').setText("فصل");
+    sheet4.getRangeByName('${letters[3]}1').setText("رقم");
+    sheet4.getRangeByName('${letters[4]}1').setText("المجموع");
+    sheet4.getRangeByName('${letters[5]}1').setText("التوارخ");
+
+    int numberRowSheet4 = 2;
+    List<PersonModel> personsEC4 =
+    await DatabaseProvider.instance.readAllPersonByClassNumber("EC.4");
+    personsEC4.forEach((person) async{
+      int count = 0;
+      List<String> dates = [];
+
+      List<AttendanceModel> attends =
+      await DatabaseProvider.instance.readAllAttendsByCodeAndClassNumber(person.name, person.code, person.classNumber);
+      if(attends.length>0){
+        sheet4.getRangeByName('${letters[0]}${numberRowSheet4}').setText(person.name);
+        sheet4.getRangeByName('${letters[1]}${numberRowSheet4}').setText("${person.classNumber}_${person.code}");
+        sheet4.getRangeByName('${letters[2]}${numberRowSheet4}').setText(person.classNumber);
+        sheet4.getRangeByName('${letters[3]}${numberRowSheet4}').setText(person.code);
+        count = attends.fold(0, (sum, att) => sum + (int.parse(att.total.toString())));
+        sheet4.getRangeByName('${letters[4]}${numberRowSheet4}').setText(count.toString());
+        dates = attends
+            .map((att) => att.date)
+            .where((date) => date.isNotEmpty) // optional: skip empty strings
+            .toList();
+
+        String datesString = dates.join(', ');
+
+        sheet4.getRangeByName('${letters[5]}${numberRowSheet4}').setText(datesString);
+        numberRowSheet4++;
+      }
     });
     final List<int> bytes = workbook.saveAsStream();
     workbook.dispose();
-    if(kIsWeb){
-      AnchorElement(href: 'data:application/octet-srteam;charset=utf-16le;based64,${base64.encode(bytes)}')
-        ..setAttribute('download', "TotalGrade.xlsx")..click();
+    final time = DateFormat('yyyy-MM-dd_HH-mm-ss').format(DateTime.now());
+    if (kIsWeb) {
+      AnchorElement(
+          href:
+          'data:application/octet-srteam;charset=utf-16le;based64,${base64.encode(bytes)}')
+        ..setAttribute('download', "educational_class($time)_total.xlsx")
+        ..click();
       Navigator.pop(context);
-    }else{
-      final String path =(await getApplicationSupportDirectory()).path;
-      final String fileName = "$path/TotalGrade.xlsx";
+    } else {
+      final String path = (await getApplicationSupportDirectory()).path;
+      final String fileName = "$path/educational_class($time)_total.xlsx";
       try {
         await File(fileName).writeAsBytes(bytes, flush: true);
         final file = File(fileName);
         if (await file.exists()) {
-          final uri = Uri.file(file.path);
-          if (await canLaunchUrl(uri)) {
-            await launchUrl(uri);
-          } else {
-            Fluttertoast.showToast(msg: "Could not open file");
+          final result = await OpenFilex.open(file.path);
+          if (result.type != ResultType.done) {
+            Fluttertoast.showToast(msg: "Could not open file: ${result.message}");
           }
         }
       } on FileSystemException catch (e) {
         Fluttertoast.showToast(msg: "Error saving file");
       }
+      Navigator.pop(context);
+
     }
+
   }
+
+
 }
 
