@@ -38,7 +38,11 @@ class _LoginScreenState extends State<LoginScreen> {
         );
         Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
       } catch (e) {
-        rethrow;
+        Fluttertoast.showToast(
+          msg: "البريد الإلكتروني أو كلمة المرور غير صحيحة",
+          backgroundColor: Colors.red,
+          gravity: ToastGravity.CENTER,
+        );
       } finally {
         if (mounted) {
           setState(() {

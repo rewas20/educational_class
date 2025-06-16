@@ -19,24 +19,18 @@ class AuthService {
         password: password,
       );
     } on FirebaseAuthException catch (e) {
-      String message = 'حدث خطأ في تسجيل الدخول';
+      String message = 'البريد الإلكتروني أو كلمة المرور غير صحيحة';
       switch (e.code) {
         case 'user-not-found':
-          message = 'لم يتم العثور على المستخدم';
-          break;
         case 'wrong-password':
-          message = 'كلمة المرور غير صحيحة';
-          break;
         case 'invalid-email':
-          message = 'البريد الإلكتروني غير صالح';
-          break;
         case 'user-disabled':
-          message = 'تم تعطيل هذا المستخدم';
+          message = 'البريد الإلكتروني أو كلمة المرور غير صحيحة';
           break;
       }
       throw Exception(message);
     } catch (e) {
-      throw Exception('حدث خطأ غير متوقع');
+      throw Exception('البريد الإلكتروني أو كلمة المرور غير صحيحة');
     }
   }
 
