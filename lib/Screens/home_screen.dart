@@ -694,7 +694,7 @@ class _HomeScreenState extends State<HomeScreen> {
         sheet.getRangeByName('${letters[5]}${currentRow}').setText(datesString);
         
       }else{
-        sheet.getRangeByName('${letters[4]}${currentRow}').setText(0);
+        sheet.getRangeByName('${letters[4]}${currentRow}').setText("0");
 
       }
        currentRow++;
