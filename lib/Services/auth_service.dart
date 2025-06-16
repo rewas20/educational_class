@@ -34,17 +34,9 @@ class AuthService {
           message = 'تم تعطيل هذا المستخدم';
           break;
       }
-      Fluttertoast.showToast(
-        msg: message,
-        backgroundColor: Colors.red,
-      );
-      throw e;
+      throw Exception(message);
     } catch (e) {
-      Fluttertoast.showToast(
-        msg: 'حدث خطأ غير متوقع',
-        backgroundColor: Colors.red,
-      );
-      throw e;
+      throw Exception('حدث خطأ غير متوقع');
     }
   }
 

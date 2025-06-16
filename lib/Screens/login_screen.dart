@@ -38,10 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
         );
         Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
       } catch (e) {
-        Fluttertoast.showToast(
-          msg: e.toString(),
-          backgroundColor: Colors.red,
-        );
+        rethrow;
       } finally {
         if (mounted) {
           setState(() {
