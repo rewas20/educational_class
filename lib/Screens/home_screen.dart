@@ -676,12 +676,11 @@ class _HomeScreenState extends State<HomeScreen> {
         person.code, 
         person.classNumber
       );
-      
-      if (attends.isNotEmpty) {
         sheet.getRangeByName('${letters[0]}${currentRow}').setText(person.name);
         sheet.getRangeByName('${letters[1]}${currentRow}').setText("${person.classNumber}_${person.code}");
         sheet.getRangeByName('${letters[2]}${currentRow}').setText(person.classNumber);
         sheet.getRangeByName('${letters[3]}${currentRow}').setText(person.code);
+      if (attends.isNotEmpty) {
         
         int count = attends.fold(0, (sum, att) => sum + (int.parse(att.total.toString())));
         sheet.getRangeByName('${letters[4]}${currentRow}').setText(count.toString());
@@ -695,6 +694,8 @@ class _HomeScreenState extends State<HomeScreen> {
         sheet.getRangeByName('${letters[5]}${currentRow}').setText(datesString);
         
         currentRow++;
+      }else{
+        sheet.getRangeByName('${letters[4]}${currentRow}').setText(0);
       }
     }
   }

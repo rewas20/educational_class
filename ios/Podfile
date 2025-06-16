@@ -46,10 +46,9 @@ post_install do |installer|
     
     # Add additional build settings
     target.build_configurations.each do |config|
-      # Set minimum iOS version
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'
       
-      # Disable bitcode as it's deprecated
+      # Enable bitcode
       config.build_settings['ENABLE_BITCODE'] = 'NO'
       
       # Enable arm64 architecture for iOS simulator
@@ -57,34 +56,21 @@ post_install do |installer|
       
       # Enable code signing
       config.build_settings['CODE_SIGNING_ALLOWED'] = 'YES'
+      
+      # Enable automatic signing
       config.build_settings['CODE_SIGNING_REQUIRED'] = 'NO'
       
-      # Set valid architectures
+      # Enable arm64 architecture
       config.build_settings['VALID_ARCHS'] = 'arm64 arm64e x86_64'
       
-      # Set Swift version
+      # Enable Swift version
       config.build_settings['SWIFT_VERSION'] = '5.0'
       
-      # Enable optimization for release builds
+      # Enable optimization
       if config.name == 'Release'
         config.build_settings['SWIFT_OPTIMIZATION_LEVEL'] = '-O'
         config.build_settings['GCC_OPTIMIZATION_LEVEL'] = 's'
-        config.build_settings['SWIFT_COMPILATION_MODE'] = 'wholemodule'
-        config.build_settings['ENABLE_NS_ASSERTIONS'] = 'NO'
-        config.build_settings['ENABLE_TESTABILITY'] = 'NO'
       end
-      
-      # Enable parallel build
-      config.build_settings['SWIFT_COMPILATION_MODE'] = 'wholemodule'
-      
-      # Enable module stability
-      config.build_settings['BUILD_LIBRARY_FOR_DISTRIBUTION'] = 'YES'
-      
-      # Enable dead code stripping
-      config.build_settings['DEAD_CODE_STRIPPING'] = 'YES'
-      
-      # Enable app thinning
-      config.build_settings['ENABLE_APP_THINNING'] = 'YES'
     end
   end
 end 
