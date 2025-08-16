@@ -593,10 +593,10 @@ class _HomeScreenState extends State<HomeScreen> {
       List<String> letters = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
       final xls.Workbook workbook = xls.Workbook();
       final xls.Worksheet sheet = workbook.worksheets[0];
+      sheet.name = "الصف الاول";
       final xls.Worksheet sheet2 = workbook.worksheets.addWithName("الصف الثاني");
       final xls.Worksheet sheet3 = workbook.worksheets.addWithName("الصف الثالث");
       final xls.Worksheet sheet4 = workbook.worksheets.addWithName("الصف الرابع");
-      sheet.name = "الصف الاول";
 
       // Set headers for all sheets
       for (var currentSheet in [sheet, sheet2, sheet3, sheet4]) {
@@ -604,8 +604,10 @@ class _HomeScreenState extends State<HomeScreen> {
         currentSheet.getRangeByName('${letters[1]}1').setText("كود");
         currentSheet.getRangeByName('${letters[2]}1').setText("فصل");
         currentSheet.getRangeByName('${letters[3]}1').setText("رقم");
-        currentSheet.getRangeByName('${letters[4]}1').setText("المجموع");
-        currentSheet.getRangeByName('${letters[5]}1').setText("التوارخ");
+        currentSheet.getRangeByName('${letters[4]}1').setText("الصلاة");
+        currentSheet.getRangeByName('${letters[5]}1').setText("فكر مسيحي");
+        currentSheet.getRangeByName('${letters[6]}1').setText("المجموع");
+        currentSheet.getRangeByName('${letters[7]}1').setText("التوارخ");
       }
 
       // Process each class
@@ -659,9 +661,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _processClass(xls.Worksheet sheet, String classNumber, int startRow) async {
     List<String> letters = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
     int currentRow = startRow;
-    
+
     List<PersonModel> persons = await DatabaseProvider.instance.readAllPersonByClassNumber(classNumber);
-    
+
     // Sort persons by code
     persons.sort((a, b) {
       // Convert codes to integers for proper numerical sorting
@@ -669,34 +671,67 @@ class _HomeScreenState extends State<HomeScreen> {
       int codeB = int.tryParse(b.code) ?? 0;
       return codeA.compareTo(codeB);
     });
-    
+
     for (var person in persons) {
       List<AttendanceModel> attends = await DatabaseProvider.instance.readAllAttendsByCodeAndClassNumber(
-        person.name, 
-        person.code, 
-        person.classNumber
+          person.name,
+          person.code,
+          person.classNumber
       );
-      
+
       if (attends.isNotEmpty) {
         sheet.getRangeByName('${letters[0]}${currentRow}').setText(person.name);
         sheet.getRangeByName('${letters[1]}${currentRow}').setText("${person.classNumber}_${person.code}");
         sheet.getRangeByName('${letters[2]}${currentRow}').setText(person.classNumber);
         sheet.getRangeByName('${letters[3]}${currentRow}').setText(person.code);
-        
+
+
+        int prayerYesCount = 0;
+        int christianThoughtYesCount = 0;
+
+        for (var att in attends) {
+          if (att.answer != null && att.answer!.isNotEmpty) {
+            // إزالة الأقواس الخارجيه { }
+            String cleaned = att.answer!.replaceAll("{", "").replaceAll("}", "");
+
+            // قسم على ,
+            final questionAttend = cleaned.split(",");
+
+            Map<String, String> mapAnswer = {};
+            for (var element in questionAttend) {
+              final keyValue = element.split(":");
+              if (keyValue.length == 2) {
+                String key = keyValue[0].trim();
+                String value = keyValue[1].trim();
+                mapAnswer[key] = value;
+
+                // عد "نعم"
+                if (key == "الصلاة" && value == "نعم") prayerYesCount++;
+                if (key == "فكر مسيحي" && value == "نعم") christianThoughtYesCount++;
+              }
+            }
+          }
+        }
+
+
+        sheet.getRangeByName('${letters[4]}${currentRow}').setText(prayerYesCount.toString());
+        sheet.getRangeByName('${letters[5]}${currentRow}').setText(christianThoughtYesCount.toString());
         int count = attends.fold(0, (sum, att) => sum + (int.parse(att.total.toString())));
-        sheet.getRangeByName('${letters[4]}${currentRow}').setText(count.toString());
-        
+        sheet.getRangeByName('${letters[6]}${currentRow}').setText(count.toString());
+
         List<String> dates = attends
             .map((att) => att.date)
             .where((date) => date.isNotEmpty)
             .toList();
-        
+
+
         String datesString = dates.join(', ');
-        sheet.getRangeByName('${letters[5]}${currentRow}').setText(datesString);
-        
+        sheet.getRangeByName('${letters[7]}${currentRow}').setText(datesString);
+
         currentRow++;
       }
     }
   }
 }
+
 
